@@ -1,4 +1,4 @@
-public class Estudiante {
+public class Estudiante implements Comparable<Estudiante>{
     final String nombre;
     private final int id;
     private int edad;
@@ -18,7 +18,7 @@ public class Estudiante {
         this.facultad = facultad;
         this.carrera = carrera;
         this.deportesInscritos = new DLL<Deporte>();
-        this.solicitudesPendientes = new Queue<Deporte>();
+        this.solicitudesPendientes = new Queue<Deporte>(5);
 
     }
     public String getNombre() {
@@ -41,6 +41,38 @@ public class Estudiante {
     }
     public String getCarrera() {
         return carrera;
+    }
+    public DLL<Deporte> getDeportesInscritos() {
+        return deportesInscritos;
+    }
+    public Queue<Deporte> getSolicitudesPendientes() {
+        return solicitudesPendientes;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj) {
+        return true;
+        }
+        
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        
+        Estudiante otro = (Estudiante) obj;
+        
+        return this.id == otro.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(this.id);
+    }
+
+    @Override 
+    public int compareTo(Estudiante estudiante2){
+        return  Integer.compare(this.edad, estudiante2.getEdad());
+        
     }
     
 }
