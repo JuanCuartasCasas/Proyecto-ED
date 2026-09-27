@@ -126,7 +126,7 @@ public class DLL<T> {
             node.next = null;
             tail = node;
         }
-        count--; // Se corrigió la falta de decremento de count
+        count--;
     }
 
     public void deleteNodeBefore(DLLNode<T> node) {
@@ -221,5 +221,38 @@ public class DLL<T> {
 
     public int size() {
         return count;
+    }
+
+    public void deleteNode(DLLNode<T> node){
+        if (isEmpty() || node == null) {
+            System.out.println("No se puede eliminar: nodo inválido o lista vacía.");
+            return;
+        }
+
+        if (head == tail && node == head) {
+            head = null;
+            tail = null;
+            count = 0;
+            return;
+        }
+
+        if (node == head) {
+            popFront();
+            return;
+        }
+
+        if (node == tail) {
+            popBack();
+            return;
+        }
+
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+
+        node.next = null;
+        node.prev = null;
+
+        count--;
+
     }
 }
