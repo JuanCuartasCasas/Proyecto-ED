@@ -9,6 +9,7 @@ public class Deporte{
 
     private Queue<Estudiante> colaSolicitudes;
     private DLL<Estudiante> listaInscritos;
+    private Queue<Estudiante> colaEsperaInscripcion;
 
     public Deporte(int id, String nombre, String horario, int cupos, String tipo_curso, String entrenador){
         this.id = id;
@@ -20,7 +21,8 @@ public class Deporte{
         this.entrenador = entrenador;
 
         this.colaSolicitudes = new Queue<Estudiante>(cuposMaximos);
-        this.listaInscritos = new DLL <>();
+        this.listaInscritos = new DLL <Estudiante>();
+        this.colaEsperaInscripcion = new Queue<Estudiante>(10);
     }
 
     public int get_Id(){
@@ -69,6 +71,9 @@ public class Deporte{
 
     public DLL<Estudiante> getListaInscritos() {
         return listaInscritos;
+    }
+    public Queue<Estudiante> getColaEsperaInscripcion() {
+        return colaEsperaInscripcion;
     }
 
     @Override
