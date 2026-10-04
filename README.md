@@ -3,7 +3,13 @@
 Proyecto de clase de **Estructuras de Datos (2016699), 2026-2**  
 Universidad Nacional de Colombia, Sede Bogotá, Facultad de Ingeniería
 
-**Autores:** Juan Diego Cuartas Casas, Laura Juliana Espinosa Muñoz, Marco Antonio García Villamil, Nicolás Hernández Cardona, Santiago Neira Lamadrid y Juan Pablo Sánchez Ibáñez.
+**Autores:** 
+- Juan Diego Cuartas Casas 
+- Laura Juliana Espinosa Muñoz
+- Marco Antonio García Villamil
+- Nicolás Hernández Cardona
+- Santiago Neira Lamadrid
+- Juan Pablo Sánchez Ibáñez.
 
 ---
 
@@ -26,7 +32,7 @@ Dos estudiantes están conectados **directamente** si practican un mismo deporte
 
 ## Producto mínimo viable (MVP)
 
-Programa de consola. Los estudiantes se registran desde el menú o se cargan desde un archivo de texto (una línea por estudiante). La interfaz gráfica no hace parte del alcance.
+Programa de consola. Los estudiantes se registran desde el menú o se cargan desde un archivo de texto. La interfaz gráfica no hizo parte del alcance.
 
 | RF  | Requisito |
 |-----|-----------|
@@ -48,7 +54,7 @@ Programa de consola. Los estudiantes se registran desde el menú o se cargan des
 
 ## Diseño del sistema
 
-La clase `SistemaDeportes` atiende los requisitos con tres árboles AVL y con las listas que unen estudiantes y deportes. Esas listas forman un **grafo bipartito implícito**: los estudiantes y los deportes son los vértices, y cada pareja (estudiante, deporte que practica) es una arista. Una cola permite recorrer ese grafo por anchura para obtener las comunidades y las conexiones.
+La clase `SistemaDeportes` atiende los requisitos con tres árboles AVL y con las listas que unen estudiantes y deportes. Esas listas forman un **grafo bipartito implícito** Explicado con profundiad en el informe. Una cola permite recorrer ese grafo por anchura para obtener las comunidades y las conexiones.
 
 ### Estructuras de datos elegidas
 
@@ -56,9 +62,9 @@ En los costos, *n* es la cantidad de estudiantes, *d* la de deportes y *m* la de
 
 | Estructura | Uso | Requisitos | Costo |
 |------------|-----|------------|-------|
-| **AVL de estudiantes** (clave: ID) | Registrar, consultar y eliminar por ID | RF1, RF2, RF3 | O(log n) en el peor caso |
+| **AVL de estudiantes** (clave: ID) | Registrar, consultar y eliminar por ID | RF1, RF2, RF3 | O(log n)  |
 | **AVL de deportes** (clave: nombre normalizado) | Buscar o crear cada deporte al registrar | RF1 | O(log d) |
-| **Listas doblemente enlazadas (DLL)** | Relación estudiante–deporte: cada estudiante tiene una DLL de deportes que practica y otra de los que le interesan; cada deporte tiene una DLL de practicantes | RF1, RF3, RF4, RF5 | Quitar un estudiante de la DLL de un deporte: O(1) |
+| **Listas doblemente enlazadas (DLL)** | Relación estudiante–deporte: cada estudiante tiene una DLL de deportes que practica y otra de los que le interesan; cada deporte tiene una DLL de practicantes | RF1, RF3, RF4, RF5 | Quitar un estudiante de la DLL de un deporte a partir de su referencia: O(1) |
 | **Cola** | Recorrido por anchura del grafo bipartito | RF4, RF5, RF6 | O(V + E), con V = n + d y E = m |
 | **AVL del ranking** (clave: número de practicantes, nombre) | Listar deportes de más a menos practicantes con un recorrido inorden | RF7 | Listar: O(d); actualizar un deporte: O(log d) |
 
@@ -80,46 +86,41 @@ En los costos, *n* es la cantidad de estudiantes, *d* la de deportes y *m* la de
    5. **Conexión (RF5 y RF6):** encola al estudiante que hace la consulta y saca estudiantes de la cola hasta encontrar uno que practique un deporte de interés (conexión encontrada) o hasta que la cola se vacíe (no hay conexión).
    6. **Ranking (RF7):** recorrido inorden del AVL del ranking.
 
-## Formato del archivo de entrada
-
-<!-- COMPLETAR con el formato real que lee el código (separadores, orden de campos). -->
-
-Cada línea del archivo de texto (por ejemplo, `estudiantes.txt`) representa un estudiante con su ID, nombre, deportes que practica y deportes que le interesan.
-
-```text
-<!-- Ejemplo de una línea válida según el código -->
-```
 
 ## Estructura del repositorio
-
-<!-- COMPLETAR con el árbol real de carpetas y clases del repositorio. -->
-
 ```text
-Proyecto-ED/
-├── ...
+Proyecto-ED/   
+├──CursoIntersemestral.java
+├──DLL.java
+├──DLLNode.java
+├──Deporte.java
+├── DeporteRepresentativo   
+├── Estudiante.java
+├── GestorDeportes.java
+├── MyQueue.java
+├── Queue.java
+├── Recreativo.java
+├── solicitud.java
 └── README.md
 ```
 
 ## Requisitos, compilación y ejecución
 
-<!-- COMPLETAR con el lenguaje/versión y los comandos reales (por ejemplo, javac/java, Maven o Gradle). -->
+Fase final de compilaciòn aùn en proceso:
 
 ```bash
-git clone https://github.com/JuanCuartasCasas/Proyecto-ED.git
+git clone https://github.com/laurajespm/Proyecto-ED.git
 cd Proyecto-ED
-# compilar y ejecutar: completar según el código
+
 ```
 
 ## Estado del proyecto
+A partir del desarrollo actualmente utilizado, se completò la **Entrega 1**
 
 - **Entrega 1:** reporte con comprensión del problema, MVP, estructuras elegidas y flujo general.
-- **Entrega 2:** implementación de las estructuras y los requisitos RF1 a RF7.
-- **Entrega 3:** evaluación de una tabla hash como alternativa a los AVL de directorio.
 
 ## Referencias
 
-1. N. Rhodes, "Basic Data Structures: Dynamic Arrays and Amortized Analysis," Department of Computer Science and Engineering, University of California, San Diego.
-2. N. Rhodes, "Basic Data Structures: Stacks and Queues," Department of Computer Science and Engineering, University of California, San Diego.
-3. N. Rhodes, "Basic Data Structures: Arrays and Linked Lists," Department of Computer Science and Engineering, University of California, San Diego.
+1. N. Rhodes, "Basic Data Structures" Department of Computer Science and Engineering, University of California, San Diego.
 4. M. A. Weiss, *Data Structures and Algorithm Analysis in Java*, 3.ª ed. Boston, MA, EE. UU.: Pearson, 2012.
 5. T. H. Cormen, C. E. Leiserson, R. L. Rivest y C. Stein, *Introduction to Algorithms*, 4.ª ed. Cambridge, MA, EE. UU.: MIT Press, 2022.
