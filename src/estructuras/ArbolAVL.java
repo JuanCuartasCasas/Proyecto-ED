@@ -25,13 +25,57 @@ public class ArbolAVL<K extends Comparable<K>, V> {
 
     // valor guardado con esa clave, o null si no está: se baja por la izquierda o la derecha según la clave
     public V buscar(K clave) { // O(log n)
-        throw pendiente();
+        Nodo <K, V> actual = raiz;
+        while(actual != null) {
+        int comparacion = clave.compareTo(actual.clave);
+
+        if (comparacion == 0) {
+            return actual.valor;
+        }
+        actual = comparacion < 0 ? actual.izquierdo: actual.derecho;
+        }
+        return null;
     }
 
     // inserta la pareja (si la clave ya existe, cambia el valor) y rebalancea el camino hasta la raíz
     public void insertar(K clave, V valor) { // O(log n)
-        throw pendiente();
+        if (clave == null) {
+        throw new IllegalArgumentException("La clave no puede ser null");
     }
+
+    boolean[] nuevo = {false};
+    raiz = insertar(raiz, clave, valor, nuevo);
+
+    if (nuevo[0]) {
+        tamano++;
+    }
+    }
+
+    private Nodo<K, V> insertar(
+        Nodo<K, V> nodo,
+        K clave,
+        V valor,
+        boolean[] nuevo) {
+
+    if (nodo == null) {
+        nuevo[0] = true;
+        return new Nodo<>(clave, valor);
+    }
+
+    int comparacion = clave.compareTo(nodo.clave);
+
+    if (comparacion < 0) {
+        nodo.izquierdo = insertar(nodo.izquierdo, clave, valor, nuevo);
+    } else if (comparacion > 0) {
+        nodo.derecho = insertar(nodo.derecho, clave, valor, nuevo);
+    } else {
+        nodo.valor = valor;
+        return nodo;
+    }
+
+    actualizarAltura(nodo);
+    return balancear(nodo);
+}
 
     // quita la clave y retorna su valor (null si no estaba); con dos hijos se usa el sucesor inorden
     public V eliminar(K clave) { // O(log n)
@@ -49,6 +93,21 @@ public class ArbolAVL<K extends Comparable<K>, V> {
 
     public boolean isEmpty() { // O(1)
         return raiz == null;
+    }
+
+    private int altura(Nodo<K, V> nodo) {
+    return nodo == null ? 0 : nodo.altura;
+    }
+
+    private void actualizarAltura(Nodo<K, V> nodo) {
+    nodo.altura = 1 + Math.max(
+            altura(nodo.izquierdo),
+            altura(nodo.derecho)
+        );
+    }
+
+    private int balance(Nodo<K, V> nodo) {
+    return nodo == null ? 0 : altura(nodo.izquierdo) - altura(nodo.derecho);
     }
 
     // las cuatro situaciones de desbalance se corrigen con estas dos rotaciones (simples o combinadas)
