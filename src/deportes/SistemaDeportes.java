@@ -2,6 +2,10 @@ package deportes;
 
 import estructuras.ArbolAVL;
 import estructuras.DLL;
+import estructuras.DLLNode;
+
+import java.text.Normalizer;
+import java.util.Locale;
 
 // Plantilla del sistema para la Entrega 1. Cada método corresponde a un requisito funcional del reporte
 // (RF1 a RF7) y su comentario dice qué estructura va a usar; la lógica se implementa en la Entrega 2.
@@ -12,6 +16,13 @@ import estructuras.DLL;
 // que practica y cada deporte la lista de sus practicantes, y esas listas hacen de listas de adyacencia.
 // Dos estudiantes están conectados directamente si comparten un deporte, e indirectamente si hay una
 // cadena de estudiantes que comparten deportes entre sí.
+
+private static String NormalizarNombre(String nombre){
+    if (nombre == null || nombre.isBlank()){
+        throw new IllegalArgumentException( "Nombre del deporte no debe estar vacio");
+    }
+    return Normalizer.normalize(nombre, Normalizer.Form.NFD).replaceAll("\\p{M}", "").trim().toLowerCase(Locale.ROOT);
+}
 public class SistemaDeportes {
 
     private final ArbolAVL<Integer, Estudiante> estudiantes = new ArbolAVL<>(); // acceso por ID
