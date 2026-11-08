@@ -17,12 +17,7 @@ import java.util.Locale;
 // Dos estudiantes están conectados directamente si comparten un deporte, e indirectamente si hay una
 // cadena de estudiantes que comparten deportes entre sí.
 
-private static String NormalizarNombre(String nombre){
-    if (nombre == null || nombre.isBlank()){
-        throw new IllegalArgumentException( "Nombre del deporte no debe estar vacio");
-    }
-    return Normalizer.normalize(nombre, Normalizer.Form.NFD).replaceAll("\\p{M}", "").trim().toLowerCase(Locale.ROOT);
-}
+
 public class SistemaDeportes {
 
     private final ArbolAVL<Integer, Estudiante> estudiantes = new ArbolAVL<>(); // acceso por ID
@@ -36,12 +31,53 @@ public class SistemaDeportes {
     // de intereses del estudiante, y un deporte que ya practica no se cuenta como interés
     public Estudiante registrarEstudiante(int id, String nombre, String[] practica, String[] intereses) {
         // O(log n + (p + i) log d)
-        throw pendiente();
+        if(estudiantes.buscar(id) != null) {
+            throw new IllegalArgumentException(
+                    "Ya existe un estudiante con el ID " + id
+            );
+        }
+        Estudiante estudiante = new Estudiante(nombre,id,0,0,"","","");
+        if (practica != null) {
+            for (String nombreDeporte : practica) {
+                Deporte deporte = obtenerOCrearDeporte(nombreDeporte);
+                if (contienePractica(estudiante, deporte)) continue;
+                
+                int cantidadAnterior =  deporte.getCantidadPracticantes();
+
+                DLLNode<Estudiante> nodo = deporte.getListaInscritos().pushBack(estudiante);
+
+                estudiante.getPractica().pushBack(new Estudiante.Practica(deporte,nodo));
+
+                actualizarRanking(deporte,cantidadAnterior);
+            }
+        }
+
+        if (intereses != null) {
+            for (String nombreDeporte : intereses) {
+                Deporte deporte =obtenerOCrearDeporte(nombreDeporte);
+                if (!contienePractica(estudiante, deporte) && !contieneInteres(estudiante, deporte)) {
+                    
+                    estudiante.getIntereses().pushBack(deporte);
+                }
+            }
+        }
+        estudiantes.insertar(id, estudiante);
+        return estudiante;
     }
 
+    // Normalización de los nombres generados a partir del paquete Normalizer.
+    private static String NormalizarNombre(String nombre){
+    if (nombre == null || nombre.isBlank()){
+        throw new IllegalArgumentException( "Nombre del deporte no debe estar vacio");
+    }
+    return Normalizer.normalize(nombre, Normalizer.Form.NFD).replaceAll("\\p{M}", "").trim().toLowerCase(Locale.ROOT);
+    }
+    
     // RF2. Datos completos de un estudiante por su ID, con una búsqueda en el AVL; null si no existe
     public Estudiante buscarEstudiante(int id) { // O(log n)
-        throw pendiente();
+        result = estudiantes.buscar(id); 
+        if(result == null) retunr null;
+        return result;
     }
 
     // RF3. Eliminar un estudiante: se quita del AVL de estudiantes y, con los nodos que guardó al
@@ -50,6 +86,30 @@ public class SistemaDeportes {
         throw pendiente();
     }
 
+    private static boolean contienePractica(Estudiante estudiante, Deporte deporte) {
+        DLLNode<Estudiante.Practica> actual = estudiante.getPractica().getHead();
+        while (actual != null) {
+            if (actual.getData().getDeporte() == deporte) {
+                return true;
+            }
+            actual = actual.getNext();
+        }
+
+        return false;
+    }
+
+    private static boolean contieneInteres(Estudiante estudiante,Deporte deporte) {
+        DLLNode<Deporte> actual = estudiante.getIntereses().getHead();
+        while (actual != null) {
+            if (actual.getData() == deporte) {
+                return true;
+            }
+
+            actual = actual.getNext();
+        }
+
+        return false;
+    }
     // RF4. Comunidades deportivas: desde cada estudiante que no se haya visitado se hace un recorrido por
     // anchura con la cola, pasando de estudiante a deporte y de deporte a sus practicantes; cada recorrido
     // encuentra un grupo, y un grupo de dos o más estudiantes es una comunidad
@@ -67,9 +127,33 @@ public class SistemaDeportes {
 
     // RF7. Deportes de más a menos practicantes (con empate, por nombre): recorrido inorden del ranking
     public DLL<Deporte> deportesPorPracticantes() { // O(d)
-        throw pendiente();
+        return ranking.valoresEnOrden();
     }
 
+
+    private Deporte obtenerOCrearDeporte(String nombre) {
+    String clave = normalizarNombre(nombre);
+    Deporte deporte = deportes.buscar(clave);
+
+    if (deporte != null) return deporte;
+
+    deporte = new Recreativo(deportes.size() + 1,nombre.trim(),"",
+        Integer.MAX_VALUE,"",0.0,true);
+
+    deportes.insertar(clave, deporte);
+
+    ranking.insertar(new ClaveRanking(0,deporte.getNombreCurso()), deporte);
+
+    return deporte;
+    }
+
+    private void actualizarRanking(Deporte deporte, int cantidadAnterior) {
+
+    ranking.eliminar(new ClaveRanking(cantidadAnterior, deporte.getNombreCurso()));
+
+    ranking.insertar(new ClaveRanking(deporte.getCantidadPracticantes(), deporte.getNombreCurso()), deporte);
+    }
+    
     private static UnsupportedOperationException pendiente() {
         return new UnsupportedOperationException("Pendiente para la Entrega 2");
     }
